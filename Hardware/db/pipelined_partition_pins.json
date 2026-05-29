@@ -1,0 +1,593 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "o_ctrl",
+					"strict" : false
+				},
+				{
+					"name" : "HEX0[0]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX0[1]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX0[2]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX0[3]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX0[4]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX0[5]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX0[6]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX1[0]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX1[1]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX1[2]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX1[3]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX1[4]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX1[5]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX1[6]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX2[0]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX2[1]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX2[2]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX2[3]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX2[4]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX2[5]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX2[6]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX3[0]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX3[1]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX3[2]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX3[3]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX3[4]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX3[5]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX3[6]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX4[0]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX4[1]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX4[2]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX4[3]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX4[4]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX4[5]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX4[6]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX5[0]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX5[1]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX5[2]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX5[3]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX5[4]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX5[5]",
+					"strict" : false
+				},
+				{
+					"name" : "HEX5[6]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[0]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[1]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[2]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[3]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[4]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[5]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[6]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[7]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[8]",
+					"strict" : false
+				},
+				{
+					"name" : "LEDR[9]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[0]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[1]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[2]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[3]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[4]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[5]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[6]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[7]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[8]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[9]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[10]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[11]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[12]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[13]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[14]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[15]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[16]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[17]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[18]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[19]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[20]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[21]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[22]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[23]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[24]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[25]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[26]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[27]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[28]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[29]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[30]",
+					"strict" : false
+				},
+				{
+					"name" : "GPIO[31]",
+					"strict" : false
+				},
+				{
+					"name" : "o_mispred",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[0]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[1]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[2]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[3]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[4]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[5]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[6]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[7]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[8]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[9]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[10]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[11]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[12]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[13]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[14]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[15]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[16]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[17]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[18]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[19]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[20]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[21]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[22]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[23]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[24]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[25]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[26]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[27]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[28]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[29]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[30]",
+					"strict" : false
+				},
+				{
+					"name" : "o_pc_debug[31]",
+					"strict" : false
+				},
+				{
+					"name" : "o_insn_vld",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[0]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[1]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[2]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[3]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[4]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[5]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[6]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_ledg[7]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex6[0]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex6[1]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex6[2]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex6[3]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex6[4]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex6[5]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex6[6]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex7[0]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex7[1]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex7[2]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex7[3]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex7[4]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex7[5]",
+					"strict" : false
+				},
+				{
+					"name" : "o_io_hex7[6]",
+					"strict" : false
+				},
+				{
+					"name" : "PS2_CLK",
+					"strict" : false
+				},
+				{
+					"name" : "PS2_DAT",
+					"strict" : false
+				},
+				{
+					"name" : "KEY[3]",
+					"strict" : false
+				},
+				{
+					"name" : "KEY[0]",
+					"strict" : false
+				},
+				{
+					"name" : "KEY[1]",
+					"strict" : false
+				}
+			]
+		}
+	]
+}
