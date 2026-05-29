@@ -32,6 +32,9 @@ This repository contains the hardware and software implementation of a standalon
   * Direct GDRAM manipulation for the 128x64 LCD.
   * Employs an optimized Integer Parser for rendering pixels mapped accurately to a dynamic coordinate system (X: -64 to +63, Y: -32 to +31) to drastically improve drawing latency.
 
+## 🧑‍💻 Block Diagram
+<img width="16384" height="11813" alt="image" src="https://github.com/user-attachments/assets/3baad6a8-d2d1-48c5-8331-c4773a356cb1" />
+
 ## 🛠️ Hardware Requirements
 
 * **Development Board:** Terasic DE10 (Intel Cyclone V FPGA)
