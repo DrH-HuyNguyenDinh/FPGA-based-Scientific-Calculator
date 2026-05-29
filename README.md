@@ -1,4 +1,4 @@
-# 🧮 RV32IF Hardware Calculator with Custom CORDIC Accelerator
+# <img width="39.6065574" height="40" alt="image" src="https://github.com/user-attachments/assets/1c6d938b-55cf-4f6e-b5e5-4482c5753911" /> RV32IF Hardware Calculator with Custom CORDIC Accelerator <img src="https://flagcdn.com/w40/vn.png" alt="Vietnam Flag" />
 
 ![RISC-V](https://img.shields.io/badge/Architecture-RISC--V_RV32IF-blue.svg)
 ![FPGA](https://img.shields.io/badge/Platform-Intel_FPGA_DE10-orange.svg)
