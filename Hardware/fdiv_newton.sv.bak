@@ -1,0 +1,521 @@
+module fdiv_newton (
+   input  logic [31:0] i_a, i_b,       // fp s = a / b
+   input  logic [ 1:0] i_rm,           // round mode
+   input  logic        i_fdiv,         // ID stage: fdiv
+   input  logic        i_ena,          // enable
+   input  logic        i_clk, i_reset, // clock and reset 
+   
+   output logic [31:0] o_s,            // fp output
+   output logic [25:0] o_reg_x,        // x_i
+   output logic [ 4:0] o_count,        // for iteration control
+   output logic        o_busy,         // for generating stall
+   output logic        o_stall         // for pipeline stall
+);
+
+parameter ZERO = 32'h00000000;
+parameter INF  = 32'h7f800000;
+parameter NaN  = 32'h7fc00000;
+parameter MAX  = 32'h7f7fffff;
+
+// Stage 1 Wires (Alignment)
+logic        a_expo_is_00, b_expo_is_00;
+logic        a_expo_is_ff, b_expo_is_ff;
+logic        a_frac_is_00, b_frac_is_00;
+logic        sign;
+logic [ 9:0] exp10;
+logic [23:0] a_frac24, b_frac24;
+
+// Pipeline Registers (e1, e2, e3)
+logic        e1_sign, e2_sign, e3_sign;
+logic [ 1:0] e1_rm, e2_rm, e3_rm;
+logic [ 9:0] e1_exp10, e2_exp10, e3_exp10;
+logic        e1_ae00, e2_ae00, e3_ae00;
+logic        e1_aeff, e2_aeff, e3_aeff;
+logic        e1_af00, e2_af00, e3_af00;
+logic        e1_be00, e2_be00, e3_be00;
+logic        e1_beff, e2_beff, e3_beff;
+logic        e1_bf00, e2_bf00, e3_bf00;
+
+// Stage 2 Wires (Newton Core)
+logic [31:0] q;
+
+// ==========================================
+// STAGE 1: ALIGNMENT & DECODE
+// ==========================================
+fdiv_align align_stage (
+   .i_a           (i_a),
+   .i_b           (i_b),
+   .o_a_expo_is_00(a_expo_is_00),
+   .o_b_expo_is_00(b_expo_is_00),
+   .o_a_expo_is_ff(a_expo_is_ff),
+   .o_b_expo_is_ff(b_expo_is_ff),
+   .o_a_frac_is_00(a_frac_is_00),
+   .o_b_frac_is_00(b_frac_is_00),
+   .o_sign        (sign),
+   .o_exp10       (exp10),
+   .o_a_frac24    (a_frac24),
+   .o_b_frac24    (b_frac24)
+);
+
+// ==========================================
+// PIPELINE REGISTERS
+// ==========================================
+always_ff @(negedge i_reset or posedge i_clk) begin
+   if (~i_reset) begin
+      e1_sign  <= 0; e2_sign  <= 0; e3_sign  <= 0;
+      e1_rm    <= 0; e2_rm    <= 0; e3_rm    <= 0;
+      e1_exp10 <= 0; e2_exp10 <= 0; e3_exp10 <= 0;
+      e1_ae00  <= 0; e2_ae00  <= 0; e3_ae00  <= 0;
+      e1_aeff  <= 0; e2_aeff  <= 0; e3_aeff  <= 0;
+      e1_af00  <= 0; e2_af00  <= 0; e3_af00  <= 0;
+      e1_be00  <= 0; e2_be00  <= 0; e3_be00  <= 0;
+      e1_beff  <= 0; e2_beff  <= 0; e3_beff  <= 0;
+      e1_bf00  <= 0; e2_bf00  <= 0; e3_bf00  <= 0;
+   end else if (i_ena) begin
+      e1_sign  <= sign;         e2_sign  <= e1_sign;  e3_sign  <= e2_sign;
+      e1_rm    <= i_rm;         e2_rm    <= e1_rm;    e3_rm    <= e2_rm;
+      e1_exp10 <= exp10;        e2_exp10 <= e1_exp10; e3_exp10 <= e2_exp10;
+      e1_ae00  <= a_expo_is_00; e2_ae00  <= e1_ae00;  e3_ae00  <= e2_ae00;
+      e1_aeff  <= a_expo_is_ff; e2_aeff  <= e1_aeff;  e3_aeff  <= e2_aeff; 
+      e1_af00  <= a_frac_is_00; e2_af00  <= e1_af00;  e3_af00  <= e2_af00;
+      e1_be00  <= b_expo_is_00; e2_be00  <= e1_be00;  e3_be00  <= e2_be00;
+      e1_beff  <= b_expo_is_ff; e2_beff  <= e1_beff;  e3_beff  <= e2_beff;
+      e1_bf00  <= b_frac_is_00; e2_bf00  <= e1_bf00;  e3_bf00  <= e2_bf00;
+   end
+end
+
+// ==========================================
+// STAGE 2: NEWTON ITERATION CORE
+// ==========================================
+newton24 frac_newton (
+   .i_a       (a_frac24),
+   .i_b       (b_frac24),
+   .i_fdiv    (i_fdiv),
+   .i_ena     (i_ena),
+   .i_clk     (i_clk),
+   .i_reset   (i_reset),
+   
+   .o_q       (q),
+   .o_busy    (o_busy),
+   .o_count   (o_count),
+   .o_reg_x   (o_reg_x),
+   .o_stall   (o_stall)
+);
+
+// ==========================================
+// STAGE 3: NORMALIZATION & ROUNDING
+// ==========================================
+fdiv_norm norm_stage (
+   .i_q      (q),
+   .i_exp10  (e3_exp10),
+   .i_rm     (e3_rm),
+   .i_sign   (e3_sign),
+   .i_a_e00  (e3_ae00), .i_a_eff  (e3_aeff), .i_a_f00  (e3_af00),
+   .i_b_e00  (e3_be00), .i_b_eff  (e3_beff), .i_b_f00  (e3_bf00),
+   
+   .o_s      (o_s)
+);
+
+endmodule
+
+
+// =========================================================================
+// MODULE: STAGE 1 - ALIGNMENT
+// =========================================================================
+module fdiv_align (
+   input  logic [31:0] i_a, i_b,
+
+   output logic        o_a_expo_is_00, o_b_expo_is_00,
+   output logic        o_a_expo_is_ff, o_b_expo_is_ff,
+   output logic        o_a_frac_is_00, o_b_frac_is_00,
+   output logic        o_sign,
+   output logic [ 9:0] o_exp10,
+   output logic [23:0] o_a_frac24, o_b_frac24
+);
+
+logic [ 9:0] exp_10_base;
+logic [23:0] a_temp24, b_temp24;
+logic [ 4:0] shamt_a, shamt_b;
+
+assign o_a_expo_is_00 = ~|i_a[30:23];
+assign o_b_expo_is_00 = ~|i_b[30:23];
+assign o_a_expo_is_ff =  &i_a[30:23];
+assign o_b_expo_is_ff =  &i_b[30:23];
+assign o_a_frac_is_00 = ~|i_a[22:0];
+assign o_b_frac_is_00 = ~|i_b[22:0];
+
+assign o_sign = i_a[31] ^ i_b[31];
+
+assign exp_10_base = {2'h0, i_a[30:23]} - {2'h0, i_b[30:23]} + 10'h7f;
+
+assign a_temp24 = o_a_expo_is_00 ? {i_a[22:0], 1'b0} : {1'b1, i_a[22:0]};
+assign b_temp24 = o_b_expo_is_00 ? {i_b[22:0], 1'b0} : {1'b1, i_b[22:0]};
+
+// (Assumed you have this module defined elsewhere)
+shift_to_msb_equ_1 shift_a (a_temp24, o_a_frac24, shamt_a); 
+shift_to_msb_equ_1 shift_b (b_temp24, o_b_frac24, shamt_b); 
+
+assign o_exp10 = exp_10_base - {5'b0, shamt_a} + {5'b0, shamt_b};
+
+endmodule
+
+
+// =========================================================================
+// MODULE: STAGE 3 - NORMALIZATION & EXCEPTION HANDLING
+// =========================================================================
+module fdiv_norm (
+   input  logic [31:0] i_q,
+   input  logic [ 9:0] i_exp10,
+   input  logic [ 1:0] i_rm,
+   input  logic        i_sign,
+   input  logic        i_a_e00, i_a_eff, i_a_f00, 
+   input  logic        i_b_e00, i_b_eff, i_b_f00,
+
+   output logic [31:0] o_s
+);
+
+localparam ZERO = 31'h00000000;
+localparam INF  = 31'h7f800000;
+localparam NaN  = 31'h7fc00000;
+localparam MAX  = 31'h7f7fffff;
+
+logic [31:0] z0;
+logic [ 9:0] exp_adj;
+logic [ 9:0] exp0, exp1;
+logic [31:0] frac0;
+logic [26:0] frac;
+logic        frac_plus_1;
+logic [24:0] frac_round;
+logic        overflow;
+
+// Right Shifter variables (NO ">>" ALLOWED)
+logic [ 9:0] shift_amt;
+logic [31:0] r_stage0, r_stage1, r_stage2, r_stage3, r_stage4, z0_shifted;
+
+// Logic to avoid > 254 (NO ">" ALLOWED)
+logic        exp_gt_254;
+logic        exp_is_0;
+
+assign z0 = i_q[31] ? i_q : {i_q[30:0], 1'b0};
+assign exp_adj = i_q[31] ? i_exp10 : i_exp10 - 10'b1;
+
+// ----------------------------------------------------
+// Custom Right Barrel Shifter 
+// ----------------------------------------------------
+assign shift_amt = 10'b1 - exp_adj;
+
+always @(*) begin
+   if (shift_amt[0]) r_stage0 = {1'b0, z0[31:1]};
+   else              r_stage0 = z0;
+   
+   if (shift_amt[1]) r_stage1 = {2'b0, r_stage0[31:2]};
+   else              r_stage1 = r_stage0;
+   
+   if (shift_amt[2]) r_stage2 = {4'b0, r_stage1[31:4]};
+   else              r_stage2 = r_stage1;
+   
+   if (shift_amt[3]) r_stage3 = {8'b0, r_stage2[31:8]};
+   else              r_stage3 = r_stage2;
+   
+   if (shift_amt[4]) r_stage4 = {16'b0, r_stage3[31:16]};
+   else              r_stage4 = r_stage3;
+   
+   if (|shift_amt[9:5]) z0_shifted = 32'b0; // shift > 31 bits
+   else                 z0_shifted = r_stage4;
+end
+
+// ----------------------------------------------------
+// Normalization Logic 
+// ----------------------------------------------------
+assign exp_is_0   = ~|exp_adj;
+assign exp_gt_254 = &exp_adj[7:0] | exp_adj[8] | exp_adj[9]; // exp_adj >= 255
+
+always @(*) begin
+   if (exp_adj[9]) begin // exp is negative
+      exp0 = 10'h0;
+      if (z0[31]) frac0 = z0_shifted; 
+      else        frac0 = 32'b0;
+   end 
+   else if (exp_is_0) begin // exp is 0
+      exp0 = 10'h0;
+      frac0 = {1'b0, z0[31:2], |z0[1:0]};
+   end 
+   else begin // exp > 0
+      if (exp_gt_254) begin // inf
+         exp0 = 10'hff;
+         frac0 = 32'b0;
+      end 
+      else begin // normalized
+         exp0 = exp_adj;
+         frac0 = z0;
+      end
+   end
+end
+
+// ----------------------------------------------------
+// Rounding Logic
+// ----------------------------------------------------
+assign frac = {frac0[31:6], |frac0[5:0]};
+
+assign frac_plus_1 = ~i_rm[1] & ~i_rm[0] & frac[3] & frac[2] & ~frac[1] & ~frac[0] |
+                     ~i_rm[1] & ~i_rm[0] & frac[2] & (frac[1] | frac[0]) |
+                     ~i_rm[1] &  i_rm[0] & (frac[2] | frac[1] | frac[0]) & i_sign |
+                      i_rm[1] & ~i_rm[0] & (frac[2] | frac[1] | frac[0]) & ~i_sign;
+
+assign frac_round = {1'b0, frac[26:3]} + frac_plus_1;
+
+always @(*) begin
+   if (frac_round[24]) exp1 = exp0 + 10'h1;
+   else                exp1 = exp0;
+end
+
+// ----------------------------------------------------
+// Exception Handling
+// ----------------------------------------------------
+assign overflow = exp1[9] | exp1[8] | &exp1[7:0]; // exp1 >= 255 (NO ">=" ALLOWED)
+
+logic [30:0] pre_result;
+
+always @(*) begin
+   casez ({overflow, i_rm, i_sign, i_a_e00, i_a_eff, i_a_f00, i_b_e00, i_b_eff, i_b_f00})
+      10'b1_00_?_???_??? : pre_result = INF; 
+      10'b1_01_0_???_??? : pre_result = MAX; 
+      10'b1_01_1_???_??? : pre_result = INF; 
+      10'b1_10_0_???_??? : pre_result = INF; 
+      10'b1_10_1_???_??? : pre_result = MAX; 
+      10'b1_11_?_???_??? : pre_result = MAX; 
+      
+      10'b0_??_?_010_??? : pre_result = NaN; 
+      10'b0_??_?_011_010 : pre_result = NaN; 
+      10'b0_??_?_100_010 : pre_result = NaN; 
+      10'b0_??_?_101_010 : pre_result = NaN; 
+      10'b0_??_?_00?_010 : pre_result = NaN; 
+      10'b0_??_?_011_011 : pre_result = NaN; 
+      10'b0_??_?_100_011 : pre_result = ZERO; 
+      10'b0_??_?_101_011 : pre_result = ZERO; 
+      10'b0_??_?_00?_011 : pre_result = ZERO; 
+      
+      10'b0_??_?_011_101 : pre_result = INF; 
+      10'b0_??_?_100_101 : pre_result = INF; 
+      10'b0_??_?_101_101 : pre_result = NaN; 
+      10'b0_??_?_00?_101 : pre_result = INF; 
+      10'b0_??_?_011_100 : pre_result = INF; 
+      
+      10'b0_??_?_100_100 : pre_result = {exp1[7:0], frac_round[22:0]}; 
+      10'b0_??_?_101_100 : pre_result = ZERO; 
+      10'b0_??_?_00?_100 : pre_result = {exp1[7:0], frac_round[22:0]}; 
+      10'b0_??_?_011_00? : pre_result = INF; 
+      10'b0_??_?_100_00? : pre_result = {exp1[7:0], frac_round[22:0]}; 
+      10'b0_??_?_101_00? : pre_result = ZERO; 
+      10'b0_??_?_00?_00? : pre_result = {exp1[7:0], frac_round[22:0]};
+      default            : pre_result = ZERO;
+   endcase
+end
+
+assign o_s = {i_sign, pre_result};
+
+endmodule
+
+module shift_to_msb_equ_1 (
+   input  logic [23:0] i_a,   // fraction input: 00...01xx...xx
+   output logic [23:0] o_b,   // shifted output: 1xx...xx00...00
+   output logic [ 4:0] o_sa   // shift amount
+);
+
+logic [23:0] a4, a3, a2, a1;
+
+// ----------------------------------------------------
+// Stage 4: Check top 16 bits
+// ----------------------------------------------------
+assign o_sa[4] = ~|i_a[23:8]; // Nếu 16 bit đầu toàn 0 -> o_sa[4] = 1
+
+always @(*) begin
+   if (o_sa[4]) a4 = {i_a[7:0], 16'b0};
+   else         a4 = i_a;
+end
+
+// ----------------------------------------------------
+// Stage 3: Check top 8 bits
+// ----------------------------------------------------
+assign o_sa[3] = ~|a4[23:16]; 
+
+always @(*) begin
+   if (o_sa[3]) a3 = {a4[15:0], 8'b0};
+   else         a3 = a4;
+end
+
+// ----------------------------------------------------
+// Stage 2: Check top 4 bits
+// ----------------------------------------------------
+assign o_sa[2] = ~|a3[23:20]; 
+
+always @(*) begin
+   if (o_sa[2]) a2 = {a3[19:0], 4'b0};
+   else         a2 = a3;
+end
+
+// ----------------------------------------------------
+// Stage 1: Check top 2 bits
+// ----------------------------------------------------
+assign o_sa[1] = ~|a2[23:22]; 
+
+always @(*) begin
+   if (o_sa[1]) a1 = {a2[21:0], 2'b0};
+   else         a1 = a2;
+end
+
+// ----------------------------------------------------
+// Stage 0: Check top 1 bit (MSB)
+// ----------------------------------------------------
+assign o_sa[0] = ~a1[23]; 
+
+always @(*) begin
+   if (o_sa[0]) o_b = {a1[22:0], 1'b0};
+   else         o_b = a1;
+end
+
+endmodule
+
+module newton24 (
+   input  logic [23:0] i_a,      // dividend: .1xxx...x
+   input  logic [23:0] i_b,      // divisor: .1xxx...x
+   input  logic        i_fdiv,   // ID stage: i_fdiv
+   input  logic        i_ena,    // enable, save partial product
+   input  logic        i_clk, 
+   input  logic        i_reset,  // clock and reset (clrn)
+   
+   output logic [31:0] o_q,      // quotient: x.xxxxx...x
+   output logic        o_busy,   // cannot receive new div
+   output logic [ 4:0] o_count,  // counter
+   output logic [25:0] o_reg_x,  // for sim test only 01.xx...x
+   output logic        o_stall   // for pipeline stall
+);
+
+logic [31:0] q;
+logic [25:0] reg_x;
+logic [23:0] reg_a;
+logic [23:0] reg_b;
+logic [ 4:0] count;
+logic        busy;
+
+logic [49:0] bxi;
+logic [51:0] x52;
+logic [49:0] d_x;
+logic [31:0] e2p;
+logic [ 7:0] x0;
+
+// Lấy giá trị khởi tạo từ ROM Lookup Table
+assign x0 = rom_table[i_b[22:19]];
+
+// ==========================================
+// FSM & Iteration Control
+// ==========================================
+always_ff @(posedge i_clk or negedge i_reset) begin
+   if (~i_reset) begin
+      busy  <= 1'b0;
+      count <= 5'b0;
+      reg_x <= 26'b0;
+      reg_a <= 24'b0;
+      reg_b <= 24'b0;
+   end else begin
+      // Thay count == 0 bằng cổng NOR (~|count)
+    if (i_fdiv & (~|count)) begin // do once only
+         count <= 5'h01; 
+         busy  <= 1'b1;  
+      end else begin 
+         // 3 iterations
+         if (count == 5'h01) begin
+            reg_a <= i_a; 
+            reg_b <= i_b; 
+            reg_x <= {2'b01, x0, 16'b0}; // 01.xxxx0...0
+         end
+         
+         // Thay count != 0 bằng cổng OR (|count)
+         if (|count) count <= count + 5'h01; // count++
+         
+         if (count == 5'h0f) busy <= 1'b0;   // ready for next
+         if (count == 5'h10) count <= 5'h00; // reset count
+         
+         // Lưu kết quả sau mỗi vòng lặp
+         if ((count == 5'h06) || (count == 5'h0b) || (count == 5'h10)) begin
+            reg_x <= x52[50:25]; // xx.xxxxx...x
+         end
+      end
+   end
+end
+
+assign o_stall = (i_fdiv & (~|count)) | busy;
+assign o_busy  = busy;
+assign o_count = count;
+assign o_reg_x = reg_x;
+assign o_q     = q;
+
+// ==========================================
+// DATAPATH: Newton-Raphson sử dụng DSP/Multiplier
+// ==========================================
+// 1. Tính bxi = xi * b
+assign bxi = reg_b * reg_x; // 24-bit * 26-bit = 50-bit
+
+// 2. Tính 2 - xi * b (Bù 2 của phần thập phân)
+logic [25:0] b26;
+assign b26 = ~bxi[48:23] + 1'b1; 
+
+// 3. Tính x_{i+1} = xi * (2 - xi * b)
+assign x52 = reg_x * b26; // 26-bit * 26-bit = 52-bit
+
+// ==========================================
+// PIPELINE: Tính kết quả cuối (a * xn)
+// ==========================================
+logic [25:0] reg_de_x; 
+logic [23:0] reg_de_a; 
+logic [49:0] a_s;      
+logic [49:0] m_product;
+
+// a * xn
+assign m_product = reg_de_a * reg_de_x; // 24-bit * 26-bit = 50-bit
+
+// Vì m_product đã bao gồm carry bên trong bộ nhân, ta không cần a_c riêng nữa
+assign d_x = {1'b0, a_s}; 
+assign e2p = {d_x[48:18], |d_x[17:0]}; // d_x[17:0] đưa qua cổng OR làm sticky bit
+
+always_ff @(posedge i_clk or negedge i_reset) begin
+   if (~i_reset) begin
+      reg_de_x <= 26'b0; 
+      reg_de_a <= 24'b0; 
+      a_s      <= 50'b0; 
+      q        <= 32'b0; 
+   end else if (i_ena) begin
+      reg_de_x <= x52[50:25]; // Kết quả vòng lặp 3
+    reg_de_a <= reg_a;      
+      a_s      <= m_product;  
+      q        <= e2p;        
+   end
+end
+
+// ==========================================
+// ROM LUT
+// ==========================================
+// Khai báo mảng ROM (16 phần tử, mỗi phần tử 8-bit)
+logic [7:0] rom_table [0:15];
+
+// Khởi tạo giá trị cho ROM
+initial begin
+   rom_table[4'h0] = 8'hff;
+   rom_table[4'h1] = 8'hdf;
+   rom_table[4'h2] = 8'hc3;
+   rom_table[4'h3] = 8'haa;
+   rom_table[4'h4] = 8'h93;
+   rom_table[4'h5] = 8'h7f;
+   rom_table[4'h6] = 8'h6d;
+   rom_table[4'h7] = 8'h5c;
+   rom_table[4'h8] = 8'h4d;
+   rom_table[4'h9] = 8'h3f;
+   rom_table[4'ha] = 8'h33;
+   rom_table[4'hb] = 8'h27;
+   rom_table[4'hc] = 8'h1c;
+   rom_table[4'hd] = 8'h12;
+   rom_table[4'he] = 8'h08;
+   rom_table[4'hf] = 8'h00;
+end
+
+endmodule
