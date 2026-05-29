@@ -1,0 +1,136 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/MSI/Desktop/Quartus Projects/Graphing Calculator/simulation/qsim
+vfdiv_newton
+!s110 1776496368
+!i10b 1
+!s100 ^kEA2fooiFfmKmBURn?0l3
+I:6_eooA@6l@UX41S>DAL[0
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1776496368
+Z2 8pipelined.vo
+Z3 Fpipelined.vo
+Z4 L0 31
+Z5 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z6 !s108 1776496368.000000
+Z7 !s107 pipelined.vo|
+Z8 !s90 -work|work|pipelined.vo|
+!i113 1
+Z9 o-work work
+Z10 tCvgOpt 0
+vfdiv_newton_vlg_vec_tst
+!s110 1776496369
+!i10b 1
+!s100 SWaJ1FTHbcWk2Q<SmC>O<0
+I3VVHmK8f9E[CdE[?z3@Fz1
+R1
+R0
+w1776496367
+Z11 8Waveform.vwf.vt
+Z12 FWaveform.vwf.vt
+Z13 L0 29
+R5
+r1
+!s85 0
+31
+R6
+!s107 Waveform.vwf.vt|
+Z14 !s90 -work|work|Waveform.vwf.vt|
+!i113 1
+R9
+R10
+vfsqrt_newton
+Z15 !s110 1776496893
+!i10b 1
+!s100 cYeI]iDgQf^H;_hihK2D33
+IU1TTfF2EP3B0<^oXFKjlg1
+R1
+R0
+w1776496893
+R2
+R3
+R4
+R5
+r1
+!s85 0
+31
+Z16 !s108 1776496893.000000
+R7
+R8
+!i113 1
+R9
+R10
+vfsqrt_newton_vlg_vec_tst
+R15
+!i10b 1
+!s100 2JSICdVXnL[PNkCaQ<AJe1
+I?ZadBHe8oQ0AJfJK`m:291
+R1
+R0
+w1776496892
+8Waveform1.vwf.vt
+FWaveform1.vwf.vt
+R13
+R5
+r1
+!s85 0
+31
+R16
+!s107 Waveform1.vwf.vt|
+!s90 -work|work|Waveform1.vwf.vt|
+!i113 1
+R9
+R10
+vpipelined_fmul
+Z17 !s110 1778047696
+!i10b 1
+!s100 RhYEz>Pa_kJU[@Rn7H2fV1
+Ikei<ld:>E[^k=S:ScMPJ91
+R1
+R0
+w1778047695
+R2
+R3
+R4
+R5
+r1
+!s85 0
+31
+Z18 !s108 1778047696.000000
+R7
+R8
+!i113 1
+R9
+R10
+vpipelined_fmul_vlg_vec_tst
+R17
+!i10b 1
+!s100 ;KP7]j?m[]LYe^FH1L8gm1
+IzO1T85MdCV<1PU6kN2C_Z3
+R1
+R0
+w1778047694
+R11
+R12
+R13
+R5
+r1
+!s85 0
+31
+R18
+!s107 Waveform.vwf.vt|
+R14
+!i113 1
+R9
+R10
