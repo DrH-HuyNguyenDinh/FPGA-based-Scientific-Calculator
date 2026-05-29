@@ -1,0 +1,20 @@
+Fitter Status : Successful - Fri May 29 09:08:49 2026
+Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
+Revision Name : pipelined
+Top-level Entity Name : wrapper_pipelined
+Family : Cyclone V
+Device : 5CSXFC6D6F31C6
+Timing Models : Final
+Logic utilization (in ALMs) : 30,094 / 41,910 ( 72 % )
+Total registers : 5654
+Total pins : 172 / 499 ( 34 % )
+Total virtual pins : 0
+Total block memory bits : 580,325 / 5,662,720 ( 10 % )
+Total RAM Blocks : 71 / 553 ( 13 % )
+Total DSP Blocks : 12 / 112 ( 11 % )
+Total HSSI RX PCSs : 0 / 9 ( 0 % )
+Total HSSI PMA RX Deserializers : 0 / 9 ( 0 % )
+Total HSSI TX PCSs : 0 / 9 ( 0 % )
+Total HSSI PMA TX Serializers : 0 / 9 ( 0 % )
+Total PLLs : 1 / 15 ( 7 % )
+Total DLLs : 0 / 4 ( 0 % )

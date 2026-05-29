@@ -1,0 +1,6 @@
+
+
+C:/Users/MSI/Desktop/Quartus Projects/Graphing Calculator/PLL_18MHz.v
+
+Apr 23 03PM:01:02>: Megafunction PLL Intel FPGA IP v18.1 is not listed in any 
+wizard.lst file in the specified library path(s).Wizard launch aborted
